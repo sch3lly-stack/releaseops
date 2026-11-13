@@ -10,3 +10,6 @@ coverage/
 .turbo/
 playwright-report/
 test-results/
+*.tsbuildinfo
+.husky/_
+apps/api/src/generated/

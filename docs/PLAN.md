@@ -383,12 +383,12 @@ releaseops/
 Estimates assume part-time work of about 10–15 hours/week. Each phase ends with a demoable result and a tagged release.
 
 ### Phase 0 — Foundations (Week 1) → `v0.1.0`
-- [ ] Monorepo scaffold (pnpm workspaces, TS strict, ESLint, Prettier, Husky + lint-staged)
-- [ ] `docker-compose.yml` with Postgres, Redis, Mailpit
-- [ ] Fastify skeleton with `/healthz`, pino logging, and a central error handler
-- [ ] Vite React skeleton with Tailwind, routing, and an API client
-- [ ] CI workflow: lint, typecheck, test on every PR
-- [ ] Prisma schema v1 and first migration
+- [x] Monorepo scaffold (pnpm workspaces, TS strict, ESLint, Prettier, Husky + lint-staged)
+- [x] `docker-compose.yml` with Postgres, Redis, Mailpit
+- [x] Fastify skeleton with `/healthz`, pino logging, and a central error handler
+- [x] Vite React skeleton with Tailwind, routing, and an API client
+- [x] CI workflow: lint, typecheck, test on every PR
+- [x] Prisma schema v1 and first migration
 
 **Done when:** `docker compose up` brings up the stack and CI is green.
 

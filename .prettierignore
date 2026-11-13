@@ -1,0 +1,8 @@
+dist
+node_modules
+docs/PLAN.md
+pnpm-lock.yaml
+coverage
+apps/api/prisma/migrations
+apps/api/src/generated
+*.tsbuildinfo
