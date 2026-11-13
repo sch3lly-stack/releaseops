@@ -14,6 +14,12 @@ yet. Creating those tags is an open issue. `package.json` still reports `0.1.0`.
 
 - `AGENTS.md`, `CONTRIBUTING.md`, this changelog, a pull request template, and an issue template
   that make GitHub the system of record for the project.
+- A short daily engineering routine in `.cursor/rules/engineering-workflow.mdc`.
+
+### Changed
+
+- `main` requires a pull request, the CI check, and a linear history. Squash is the only merge
+  method. Approving reviews are not required. Dependabot alerts are enabled.
 
 ## [0.2.0] - 2026-11-13
 

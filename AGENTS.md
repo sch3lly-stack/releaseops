@@ -9,6 +9,25 @@ GitHub is the system of record for planning, implementation, review, and release
 not tracked because the code exists. It is tracked when an issue, a branch, a pull request, the
 checks, and the merge all point at the same work.
 
+## Daily routine
+
+Before any development work, read this file and inspect the GitHub repository. Do not rely on
+conversation history for project status.
+
+GitHub Issues are the authoritative source of project work. Do not start a meaningful feature,
+bug fix, refactor, or improvement without an issue.
+
+When the work is finished, open or update the pull request, write the engineering self-review,
+run the tests and the required CI check, fix what those find, and merge only when the repository
+rules are satisfied. Then update the issue and the project tracking.
+
+The self-review is the author's engineering check. It is not an independent human approval. Do
+not describe it as one. Never report unfinished work as done, and never bypass a repository
+protection.
+
+`.cursor/rules/engineering-workflow.mdc` repeats this routine so it is present at the start of a
+session.
+
 ## Session start
 
 1. Read this file.
@@ -124,11 +143,13 @@ Write the engineering self-review as a pull request review comment. Do not appro
 request from a second account, and do not describe that comment as an independent human review.
 Use GitHub's review approval only when a different authorized reviewer is available.
 
-If branch protection later requires an independent approval, do not bypass it. If a merge is
-blocked, report the exact blocker and leave the pull request open.
+If a merge is blocked, report the exact blocker and leave the pull request open. Do not bypass
+branch protection, and do not turn off a required check to get a pull request in.
 
-`main` had no branch protection on 2026-11-13. Pull requests #1 and #2 used merge commits. Leave
-that history as it is. Prefer squash merge for a focused branch from this point on:
+`main` requires a pull request, the "Lint, typecheck, and test" check, and a linear history.
+Approving reviews are not required. Admins are covered by the same rule. Pull requests #1 and #2
+used merge commits before this rule existed. Leave that history as it is. Squash is the only
+merge method GitHub allows, and GitHub deletes the head branch after the merge:
 
 ```
 gh pr merge <n> --squash --delete-branch
@@ -190,6 +211,22 @@ Keep these current when a change affects them:
 
 The threat model, `docs/ARCHITECTURE.md`, and the ADRs are still an open Phase 6 issue. Do not
 pretend they exist before that issue lands.
+
+## Project board
+
+Use these columns when a GitHub Project is available:
+
+| Column      | Meaning              |
+| ----------- | -------------------- |
+| Backlog     | Approved future work |
+| Ready       | Requirements defined |
+| In Progress | Active development   |
+| In Review   | Pull request review  |
+| Testing     | Validation and CI    |
+| Done        | Merged and verified  |
+
+Move the issue as the work moves. On 2026-11-13 the board could not be created because the token
+lacked the `project` scope. Issues and milestones stay authoritative until the board exists.
 
 ## Repository facts
 

@@ -1,0 +1,27 @@
+---
+description: Read the engineering workflow before any development work
+alwaysApply: true
+---
+
+# Daily engineering routine
+
+Before doing any development work, read AGENTS.md and inspect the GitHub repository.
+
+GitHub Issues are the authoritative source of project work.
+
+Never begin a meaningful feature, bug fix, refactor, or improvement without an associated GitHub
+Issue.
+
+When work is completed, create or update a Pull Request, perform a complete engineering
+self-review, run all relevant tests and CI checks, correct discovered issues, and merge the PR
+when all repository requirements are satisfied.
+
+Update the associated GitHub Issue and project tracking information.
+
+Maintain this workflow across every session. Do not rely on conversation history to remember
+project status.
+
+Never falsely report completed work or bypass repository security protections.
+
+A self-review is the author's engineering check. It is not an independent human approval. Do not
+describe it as one.
