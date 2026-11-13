@@ -2,7 +2,7 @@
 
 **A CI/CD management platform:** track build pipelines, gate production deployments behind approvals, and keep a full audit trail of every release.
 
-> **Status: Phase 0 foundations.** See the [project plan](docs/PLAN.md) for the full roadmap.
+> **Status: Phase 1 auth and RBAC.** See the [project plan](docs/PLAN.md) for the full roadmap.
 
 [![CI](https://github.com/sch3lly-stack/releaseops/actions/workflows/ci.yml/badge.svg)](https://github.com/sch3lly-stack/releaseops/actions/workflows/ci.yml)
 
@@ -36,6 +36,8 @@ pnpm dev
 ```
 
 `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm format:check` are the same checks CI runs.
+
+The first person to register becomes the administrator. After that, registration stays closed until an administrator creates an invite from the Users page.
 
 ## Features (planned)
 
