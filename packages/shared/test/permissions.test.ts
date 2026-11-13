@@ -15,7 +15,7 @@ const expected: Record<Action, Record<UserRole, boolean>> = {
   "notify:manage": { admin: true, developer: false, approver: false },
 };
 
-function principal(role: UserRole, id = role): Principal {
+function principal(role: UserRole, id: string = role): Principal {
   return { id, role, isActive: true };
 }
 
