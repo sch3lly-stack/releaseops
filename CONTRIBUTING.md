@@ -41,10 +41,11 @@ was tested, the risks, screenshots for UI changes, and migration notes for datab
 
 Use `Closes #<issue>` when the merge completes that issue.
 
-A maintainer reviews the diff, including their own pull requests. That self-review is a review
-comment, not an independent approval. The pull request merges when the "Lint, typecheck, and
-test" check is green, the review has no blocking comments, and the acceptance criteria are met.
-Focused branches are squash-merged.
+`main` requires a pull request, a green "Lint, typecheck, and test" check, and a linear history.
+Approving reviews are not required. A maintainer still reviews the diff, including their own pull
+requests. That self-review is a review comment. It is not an independent human approval.
+
+Squash is the only merge method. GitHub deletes the head branch after the merge.
 
 ## Checks
 
