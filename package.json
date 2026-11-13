@@ -1,0 +1,40 @@
+{
+  "name": "releaseops",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @releaseops/shared build && pnpm --parallel --filter @releaseops/shared --filter @releaseops/api --filter @releaseops/worker --filter @releaseops/web dev",
+    "build": "pnpm --filter @releaseops/shared build && pnpm --parallel --filter @releaseops/api --filter @releaseops/worker --filter @releaseops/web build",
+    "typecheck": "pnpm --filter @releaseops/shared build && pnpm -r --if-present typecheck",
+    "test": "pnpm --filter @releaseops/shared build && pnpm -r --if-present test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "node ./node_modules/husky/bin.js"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "node ./node_modules/eslint/bin/eslint.js --fix",
+      "node ./node_modules/prettier/bin/prettier.cjs --write"
+    ],
+    "*.{js,mjs,cjs,json,md,yml,yaml,css}": "node ./node_modules/prettier/bin/prettier.cjs --write"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.14.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.10.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.2"
+  }
+}

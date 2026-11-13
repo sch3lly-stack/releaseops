@@ -1,0 +1,295 @@
+// ReleaseOps schema v1. See docs/PLAN.md section 5.
+// State transitions are enforced in application code (Phase 3).
+// Audit rows stay when users or projects change; database grants that
+// block UPDATE/DELETE on audit_logs arrive in Phase 5.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  admin
+  developer
+  approver
+}
+
+enum ProjectRole {
+  admin
+  developer
+  approver
+}
+
+enum BuildStatus {
+  queued
+  in_progress
+  success
+  failure
+  cancelled
+}
+
+enum DeploymentStatus {
+  pending_approval
+  approved
+  in_progress
+  succeeded
+  failed
+  rejected
+  cancelled
+}
+
+enum ApprovalDecision {
+  approved
+  rejected
+}
+
+enum WebhookDeliveryStatus {
+  received
+  processed
+  failed
+}
+
+enum NotificationChannelType {
+  email
+  slack
+  discord
+  webhook
+}
+
+enum NotificationStatus {
+  pending
+  sent
+  failed
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  name         String
+  passwordHash String?  @map("password_hash")
+  githubId     String?  @unique @map("github_id")
+  role         UserRole @default(developer)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  sessions             Session[]
+  createdProjects      Project[]       @relation("ProjectCreator")
+  memberships          ProjectMember[]
+  requestedDeployments Deployment[]    @relation("DeploymentRequester")
+  approvals            Approval[]
+  auditLogs            AuditLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  expiresAt DateTime @map("expires_at")
+  ip        String?
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model Project {
+  id               String   @id @default(uuid()) @db.Uuid
+  name             String
+  slug             String   @unique
+  description      String?
+  githubOwner      String   @map("github_owner")
+  githubRepo       String   @map("github_repo")
+  defaultBranch    String   @default("main") @map("default_branch")
+  webhookSecretEnc String?  @map("webhook_secret_enc")
+  createdById      String   @map("created_by") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  createdBy            User                  @relation("ProjectCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  members              ProjectMember[]
+  environments         Environment[]
+  builds               Build[]
+  deployments          Deployment[]
+  webhookDeliveries    WebhookDelivery[]
+  notificationChannels NotificationChannel[]
+
+  @@unique([githubOwner, githubRepo])
+  @@map("projects")
+}
+
+model ProjectMember {
+  projectId   String      @map("project_id") @db.Uuid
+  userId      String      @map("user_id") @db.Uuid
+  projectRole ProjectRole @map("project_role")
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+  @@map("project_members")
+}
+
+model Environment {
+  id                 String   @id @default(uuid()) @db.Uuid
+  projectId          String   @map("project_id") @db.Uuid
+  name               String
+  order              Int
+  requiresApproval   Boolean  @default(false) @map("requires_approval")
+  requiredApprovals  Int      @default(1) @map("required_approvals")
+  deployWorkflowFile String?  @map("deploy_workflow_file")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deployments Deployment[]
+
+  @@unique([projectId, name])
+  @@unique([projectId, order])
+  @@map("environments")
+}
+
+model Build {
+  id            String      @id @default(uuid()) @db.Uuid
+  projectId     String      @map("project_id") @db.Uuid
+  githubRunId   String      @unique @map("github_run_id")
+  commitSha     String      @map("commit_sha")
+  branch        String
+  commitMessage String?     @map("commit_message")
+  author        String?
+  status        BuildStatus
+  conclusion    String?
+  startedAt     DateTime?   @map("started_at")
+  finishedAt    DateTime?   @map("finished_at")
+  durationMs    Int?        @map("duration_ms")
+  url           String?
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deployments Deployment[]
+
+  @@index([projectId, createdAt(sort: Desc)])
+  @@index([status])
+  @@map("builds")
+}
+
+model Deployment {
+  id            String           @id @default(uuid()) @db.Uuid
+  projectId     String           @map("project_id") @db.Uuid
+  environmentId String           @map("environment_id") @db.Uuid
+  buildId       String           @map("build_id") @db.Uuid
+  requestedById String           @map("requested_by") @db.Uuid
+  status        DeploymentStatus
+  startedAt     DateTime?        @map("started_at")
+  finishedAt    DateTime?        @map("finished_at")
+  rollbackOfId  String?          @map("rollback_of") @db.Uuid
+  notes         String?
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  environment Environment  @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  build       Build        @relation(fields: [buildId], references: [id], onDelete: Cascade)
+  requestedBy User         @relation("DeploymentRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+  rollbackOf  Deployment?  @relation("DeploymentRollback", fields: [rollbackOfId], references: [id], onDelete: SetNull)
+  rollbacks   Deployment[] @relation("DeploymentRollback")
+  approvals   Approval[]
+
+  @@index([environmentId, createdAt(sort: Desc)])
+  @@index([status])
+  @@index([projectId])
+  @@map("deployments")
+}
+
+model Approval {
+  id           String           @id @default(uuid()) @db.Uuid
+  deploymentId String           @map("deployment_id") @db.Uuid
+  approverId   String           @map("approver_id") @db.Uuid
+  decision     ApprovalDecision
+  comment      String?
+  createdAt    DateTime         @default(now()) @map("created_at")
+
+  deployment Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  approver   User       @relation(fields: [approverId], references: [id], onDelete: Restrict)
+
+  @@unique([deploymentId, approverId])
+  @@map("approvals")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id")
+  before     Json?
+  after      Json?
+  ip         String?
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt(sort: Desc)])
+  @@map("audit_logs")
+}
+
+model WebhookDelivery {
+  id          String                @id @default(uuid()) @db.Uuid
+  deliveryId  String                @unique @map("delivery_id")
+  event       String
+  projectId   String?               @map("project_id") @db.Uuid
+  payload     Json
+  status      WebhookDeliveryStatus @default(received)
+  error       String?
+  receivedAt  DateTime              @default(now()) @map("received_at")
+  processedAt DateTime?             @map("processed_at")
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("webhook_deliveries")
+}
+
+model NotificationChannel {
+  id        String                  @id @default(uuid()) @db.Uuid
+  projectId String                  @map("project_id") @db.Uuid
+  type      NotificationChannelType
+  configEnc String                  @map("config_enc")
+  events    String[]
+  createdAt DateTime                @default(now()) @map("created_at")
+  updatedAt DateTime                @updatedAt @map("updated_at")
+
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  notifications Notification[]
+
+  @@map("notification_channels")
+}
+
+model Notification {
+  id        String             @id @default(uuid()) @db.Uuid
+  channelId String             @map("channel_id") @db.Uuid
+  event     String
+  entityId  String?            @map("entity_id")
+  status    NotificationStatus @default(pending)
+  attempts  Int                @default(0)
+  lastError String?            @map("last_error")
+  sentAt    DateTime?          @map("sent_at")
+  createdAt DateTime           @default(now()) @map("created_at")
+
+  channel NotificationChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@index([channelId, createdAt(sort: Desc)])
+  @@map("notifications")
+}
