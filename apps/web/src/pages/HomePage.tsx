@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchHealth } from "../api/client";
+import { useSession } from "../auth/session";
 
 type ConnectionState = "checking" | "up" | "down";
 
@@ -25,6 +26,7 @@ const statusCopy: Record<ConnectionState, { label: string; className: string }> 
 };
 
 export function HomePage() {
+  const session = useSession();
   const health = useQuery({
     queryKey: ["health"],
     queryFn: () => fetchHealth(),
@@ -40,11 +42,11 @@ export function HomePage() {
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <p className="text-sm font-medium text-emerald-300">Phase 0</p>
+        <p className="text-sm font-medium text-emerald-300">Signed in</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Deployment control plane</h1>
         <p className="mt-3 max-w-2xl text-base text-zinc-400">
           ReleaseOps tracks builds, gates production behind approvals, and keeps an audit trail.
-          This screen is the running skeleton: a typed API client talking to the Fastify service.
+          {session.data ? ` You are signed in as ${session.data.name}.` : ""}
         </p>
       </section>
 

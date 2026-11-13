@@ -393,13 +393,13 @@ Estimates assume part-time work of about 10–15 hours/week. Each phase ends wit
 **Done when:** `docker compose up` brings up the stack and CI is green.
 
 ### Phase 1 — Auth & RBAC (Weeks 2–3) → `v0.2.0`
-- [ ] Users and sessions tables, register/login/logout, argon2
-- [ ] First-user-is-admin bootstrap and the admin invite flow
-- [ ] `can()` permission matrix in `shared` with full unit tests
-- [ ] `requirePermission` route hook
-- [ ] Audit log plugin covering auth events
-- [ ] Login and register pages, protected routes, user menu
-- [ ] Admin user management page (change role, deactivate)
+- [x] Users and sessions tables, register/login/logout, argon2
+- [x] First-user-is-admin bootstrap and the admin invite flow
+- [x] `can()` permission matrix in `shared` with full unit tests
+- [x] `requirePermission` route hook
+- [x] Audit log plugin covering auth events
+- [x] Login and register pages, protected routes, user menu
+- [x] Admin user management page (change role, deactivate)
 
 **Done when:** every role sees exactly what it should, and there are tests proving each denial.
 

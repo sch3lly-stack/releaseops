@@ -4,6 +4,7 @@ import { config as loadDotenv } from "dotenv";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "./generated/prisma/client.js";
 import { SERVICE_NAMES } from "@releaseops/shared";
+import { PrismaAuthRepository } from "./auth/prisma-repository.js";
 import { buildApp } from "./app.js";
 import { loadEnv } from "./env.js";
 
@@ -24,6 +25,10 @@ const app = await buildApp({
   webOrigin: env.WEB_ORIGIN,
   service: SERVICE_NAMES.api,
   version: env.APP_VERSION,
+  auth: {
+    repository: new PrismaAuthRepository(prisma),
+    secureCookies: env.NODE_ENV === "production",
+  },
   checkReady: async () => {
     await prisma.$queryRaw`SELECT 1`;
   },
