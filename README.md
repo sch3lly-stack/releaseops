@@ -80,6 +80,12 @@ Details are in [docs/PLAN.md](docs/PLAN.md#4-system-architecture).
 | 5     | Security hardening & polish                 | v0.9.0  |
 | 6     | Public demo & release                       | v1.0.0  |
 
+## Contributing
+
+Issues, branches, and pull requests follow [CONTRIBUTING.md](CONTRIBUTING.md). The permanent
+engineering rules are in [AGENTS.md](AGENTS.md). Shipped versions are recorded in
+[CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 [MIT](LICENSE)
