@@ -192,8 +192,8 @@ A task is done only when all of the following are true:
 | v1.0.0    | 6     | Public demo and release                    |
 
 Add a `CHANGELOG.md` entry for each meaningful release. Do not create a git tag unless the issue
-for that release says to. On 2026-11-13, v0.1.0 and v0.2.0 were merged and not tagged. That
-remaining work is the open tag issue.
+for that release says to. `v0.1.0` and `v0.2.0` point at the Phase 0 and Phase 1 merge commits.
+The commit that sets `package.json` to `0.2.0` is later and is not part of those tags.
 
 Leave a milestone open until its issues, including the version tag, are done.
 

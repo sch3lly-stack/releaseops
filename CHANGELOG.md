@@ -5,8 +5,9 @@ All notable changes to ReleaseOps are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Versions below were shipped by merging to `main`. Git tags `v0.1.0` and `v0.2.0` do not exist
-yet. Creating those tags is an open issue. `package.json` still reports `0.1.0`.
+`v0.1.0` and `v0.2.0` are tagged at the historical merge commits named below. The workspace
+version in `package.json` is `0.2.0` on a later commit, so that version bump is not inside either
+tag. Documentation merged after auth is listed under Unreleased and is not part of `v0.2.0`.
 
 ## [Unreleased]
 
@@ -20,10 +21,16 @@ yet. Creating those tags is an open issue. `package.json` still reports `0.1.0`.
 
 - `main` requires a pull request, the CI check, and a linear history. Squash is the only merge
   method. Approving reviews are not required. Dependabot alerts are enabled.
+- The root workspace version and the API, web, and worker package versions are `0.2.0`. This
+  change is newer than the `v0.2.0` tag.
 
 ## [0.2.0] - 2026-11-13
 
-Shipped in [pull request #2](https://github.com/sch3lly-stack/releaseops/pull/2). Not tagged.
+Git tag `v0.2.0` points at `b2770ef6581e0b245d4c2e370353db2c65a7e4ba`, the merge of
+[pull request #2](https://github.com/JN-Schell/releaseops/pull/2)
+(`feat: add email sessions, invites, and role checks`, branch `phase-1-auth`). Later
+documentation commits are not in this tag. The tagged tree still reports `0.1.0` in
+`package.json`.
 
 ### Added
 
@@ -38,7 +45,9 @@ Shipped in [pull request #2](https://github.com/sch3lly-stack/releaseops/pull/2)
 
 ## [0.1.0] - 2026-11-13
 
-Shipped in [pull request #1](https://github.com/sch3lly-stack/releaseops/pull/1). Not tagged.
+Git tag `v0.1.0` points at `296bcbf1a977d4aa5ecbe7e7110bd4d23f995b6f`, the merge of
+[pull request #1](https://github.com/JN-Schell/releaseops/pull/1)
+(`feat: scaffold Phase 0 foundations`, branch `phase-0-foundations`).
 
 ### Added
 
